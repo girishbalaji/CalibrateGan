@@ -12,7 +12,7 @@ def resize(sample):
     mindim = min(nrow, ncol)
     resized = sample[(nrow - mindim) // 2 : (nrow + mindim) // 2,
                     (ncol - mindim) //2 : (ncol + mindim) // 2,:]
-    resized = cv2.resize(resized, (255,255))
+    resized = cv2.resize(resized, (256,256))
     return resized
 
 def process_directory(args):
@@ -68,7 +68,6 @@ def main():
     model_input_dir = "{}/{}/{}".format(OUTPUT_DIR, "SUN2012", "input")
     model_output_dir = "{}/{}/{}".format(OUTPUT_DIR, "SUN2012", "output")
 
-    print("AHH: got here")
     print("Raw image dir: {}".format(RAW_IMAGE_DIR))
     
     all_dirs = os.listdir(RAW_IMAGE_DIR)
