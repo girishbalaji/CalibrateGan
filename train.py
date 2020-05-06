@@ -100,6 +100,7 @@ if __name__ == "__main__":
     trialname = "trial4"
     batch_size = 64
     eval_batch_size = 40
+    trials_per_epocj
 
     genpath = "logs/GenModel_2020-05-05 07:47:15.209846.h5"
     discpath = "logs/DiscModel_2020-05-05 07:47:15.209846.h5"
@@ -138,6 +139,8 @@ if __name__ == "__main__":
             print("Gan loss: {}; Disc loss: {}".format(gan_loss, disc_loss))
 
             if i % 20 == 0:
+                save_performance_ims(model, trialname, im1s, im2s, "training")
+
                 model.save("logs/{}/{}".format(trialname, "models"))
                 im1s, im2s = load_batch(eval_batch_size, metadatapath, input_data_dir, output_data_dir, "val")
                 eval_loss = model.eval_on_batch(im1s, im2s, eval_batch_size)
