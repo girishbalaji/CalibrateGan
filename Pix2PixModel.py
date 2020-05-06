@@ -70,7 +70,7 @@ class Pix2PixModel:
         for idx in range(num_decoding_layers):
             num_filters = num_filters_list[idx]
             e_skip_layer = encoding_layers[num_decoding_layers - idx - 1]
-            d = self.create_decoding_layer(d, e_skip_layer, num_filters, dropout=num_filters > 2)
+            d = self.create_decoding_layer(d, e_skip_layer, num_filters, dropout=idx > 2)
         
         output = self.create_deconvolution(d, 3)
         output = Activation('tanh')(output)
@@ -151,11 +151,11 @@ class Pix2PixModel:
         real_target = np.ones((batch_size, self.patch_height, self.patch_width, 1))
         fake_target = np.zeros((batch_size, self.patch_height, self.patch_width, 1))
 
-        print("og im batch: {}".format(np.array(original_im_batch).shape))
-        print("tr im batch: {}".format(np.array(translated_im_batch).shape))
+        #print("og im batch: {}".format(np.array(original_im_batch).shape))
+        #print("tr im batch: {}".format(np.array(translated_im_batch).shape))
 
-        fake_color = self.gen_model.predict(np.array(original_im_batch))
-        disc_fake_loss = self.disc_model.train_on_batch([fake_color, original_im_batch], fake_target)
+        fake_translated_ims = self.gen_model.predict(np.array(original_im_batch))
+        disc_fake_loss = self.disc_model.train_on_batch([fake_translated_ims, original_im_batch], fake_target)
         disc_real_loss = self.disc_model.train_on_batch([translated_im_batch, original_im_batch], real_target)
         disc_loss = 0.5 * np.add(disc_fake_loss, disc_real_loss)
 
@@ -167,9 +167,42 @@ class Pix2PixModel:
         real_target = np.ones((batch_size, self.patch_height, self.patch_width, 1))
         fake_target = np.zeros((batch_size, self.patch_height, self.patch_width, 1))
 
-        fake_color = self.gen_model.predict(original_im_batch)
-        disc_fake_loss = self.disc_model.evaluate([fake_color, original_im_batch], fake_target)
+        fake_translated_ims = self.gen_model.predict(original_im_batch)
+        disc_fake_loss = self.disc_model.evaluate([fake_translated_ims, original_im_batch], fake_target)
         disc_real_loss = self.disc_model.evaluate([translated_im_batch, original_im_batch], real_target)
         disc_loss = 0.5 * np.add(disc_fake_loss, disc_real_loss)
 
         gan_loss = self.GANModel.evaluate([original_im_batch], [real_target, translated_im_batch])
+        return gan_loss
+ 
+    def save(self, log_path):
+        date = datetime.datetime.now()
+        self.gen_model.save('{0}/GenModel_{1}.h5'.format(log_path, date))
+        self.disc_model.save('{0}/DiscModel_{1}.h5'.format(log_path, date))
+        with open("{0}/modeldata_{1}.txt".format(log_path, date), 'w') as fp:
+            fp.write("{0},{1}".format(self.patch_height, self.patch_width))
+
+    def load_model(self, gen_path, disc_path):
+        self.gen_model = load_model(gen_path)
+        self.disc_model = load_model(disc_path)
+
+        #have to recompile
+        opt = tf.train.AdamOptimizer(learning_rate=0.0002, beta1=0.5, beta2=0.999)
+        self.disc_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
+        self.disc_model.trainable = False
+
+        self.GANModel = self.create_gan(self.gen_model, self.disc_model)
+
+        # Used for suppressing warnings
+        self.disc_model.trainable = True
+
+    def predict(self, original_im_batch):
+        fake_translated_ims = self.gen_model.predict(original_im_batch)
+        return fake_translated_ims
+
+
+
+        
+
+
+
