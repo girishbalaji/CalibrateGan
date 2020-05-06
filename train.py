@@ -84,7 +84,7 @@ def save_performance_ims(model, trialname, im1s, im2s, part="training", batch_si
 def save_loss(loss, trialname, part="training"):
     date = datetime.datetime.now()
     f = open("logs/{}/{}_losses.txt".format(trialname, part), "a")
-    f.write("{},{}\n".format(date, str(loss)))
+    f.write("{}\t{}\n".format(date, str(loss)))
     f.close()
 
 
