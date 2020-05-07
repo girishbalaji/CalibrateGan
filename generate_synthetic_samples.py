@@ -19,7 +19,7 @@ def process_directory(args):
     curr_dir_name, raw_image_dir, model_input_dir, model_output_dir = args
     
     print("Processing: {}...".format(curr_dir_name))
-    motion_blur_kernel = blur.MotionBlur((13,21))
+    motion_blur_kernel = blur.MotionBlur((21,41))
 
     curr_model_input_dir = "{}/{}".format(model_input_dir, curr_dir_name)
     curr_model_output_dir = "{}/{}".format(model_output_dir, curr_dir_name)
@@ -46,11 +46,12 @@ def process_directory(args):
                 if (len(curr_im.shape) != 3 or curr_im.shape[2] != 3):
                     continue
                 resized = resize(curr_im)
-                blurred = motion_blur_kernel.augment_image(resized)
-                model_input_im_path = "{}/{}".format(curr_model_input_dir, new_name)
-                model_output_im_path = "{}/{}".format(curr_model_output_dir, new_name)
-                imsave(model_input_im_path, blurred)
-                imsave(model_output_im_path, resized)
+                for i in range(3):
+                    blurred = motion_blur_kernel.augment_image(resized)
+                    model_input_im_path = "{}/{}_{}".format(curr_model_input_dir, i, new_name)
+                    model_output_im_path = "{}/{}_{}".format(curr_model_output_dir, i, new_name)
+                    imsave(model_input_im_path, blurred)
+                    imsave(model_output_im_path, resized)
 
 def main():
     SOURCE_DIR = "datasets"

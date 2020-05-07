@@ -95,15 +95,14 @@ if __name__ == "__main__":
     metadatapath = "logs/SUN2012_metadata.txt"
     
     TRAIN = True
-    LOAD = False
+    LOAD = True
 
-    trialname = "trial4"
+    trialname = "trialtuesdaynight"
     batch_size = 64
     eval_batch_size = 40
-    trials_per_epocj
 
-    genpath = "logs/GenModel_2020-05-05 07:47:15.209846.h5"
-    discpath = "logs/DiscModel_2020-05-05 07:47:15.209846.h5"
+    genpath = "logs/trial2/GenModel_2020-05-05 21:51:23.754690.h5"
+    discpath = "logs/trial2/DiscModel_2020-05-05 21:51:23.754690.h5"
     ###
     if not os.path.exists(metadatapath):
         with open(metadatapath, 'wb') as metadatafile:
@@ -131,7 +130,7 @@ if __name__ == "__main__":
         model.load_model(genpath, discpath)
     
     if TRAIN:
-        for i in range(400):
+        for i in range(1000):
             print("Training iter: {}".format(i))
             im1s, im2s = load_batch(batch_size, metadatapath, input_data_dir, output_data_dir, "training")
             gan_loss, disc_loss = model.train_on_batch(im1s, im2s, batch_size)
