@@ -40,8 +40,8 @@ def process_directory(args):
 
             # Gets {letter}_{name}_{og imname}.jpg
             new_name = "_".join(full_path.split("/")[3:])
-            print(new_name)
             if (fileName.endswith(".jpg")):
+                print(new_name)
                 curr_im = plt.imread(full_path)
                 if (len(curr_im.shape) != 3 or curr_im.shape[2] != 3):
                     continue
