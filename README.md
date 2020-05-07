@@ -4,9 +4,9 @@
 2) wget http://groups.csail.mit.edu/vision/SUN/releases/SUN2012.tar.gz
 3) tar -xzf SUN2012.tar.gz
 4) Run `generate_synthetic_samples.py`
-5) mkdir SUN2012_cleaned
-6) mkdir SUN2012_cleaned/input
-7) mkdir SUN2012_cleaned/output
+5) mkdir processed/SUN2012_cleaned
+6) mkdir processed/SUN2012_cleaned/input
+7) mkdir processed/SUN2012_cleaned/output
 
 Move and order the downloads
 
